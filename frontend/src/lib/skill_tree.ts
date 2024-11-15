@@ -388,8 +388,8 @@ export const constructQuery = (jewel: number, conqueror: string, result: SearchW
   const max_filter_length = 50;
   const max_filters = 4;
   const max_query_length = max_filter_length * max_filters;
-  const final_query = [];
-  const stat = {
+  const final_query: { type: string; value: { min: number }; filters: any[]; disabled: boolean }[] = [];
+  const stat: { type: string; value: { min: number }; filters: { id: string; value: { min: number; max: number }; disabled: boolean }[]; disabled: boolean } = {
     type: 'count',
     value: { min: 1 },
     filters: [],
@@ -431,6 +431,8 @@ export const constructQuery = (jewel: number, conqueror: string, result: SearchW
           max: r.seed
         }
       });
+
+      console.log("Final query: ", final_query[index]);
     }
   } else {
     for (const conq of Object.keys(tradeStatNames[jewel])) {
@@ -442,7 +444,8 @@ export const constructQuery = (jewel: number, conqueror: string, result: SearchW
           value: {
             min: r.seed,
             max: r.seed
-          }
+          },
+          disabled: false
         });
       }
 
