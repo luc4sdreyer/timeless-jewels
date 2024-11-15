@@ -432,29 +432,31 @@ export const constructQuery = (jewel: number, conqueror: string, result: SearchW
         }
       });
 
-      console.log("Final query: ", final_query[index]);
+      console.log("too many results case, Final query: ", final_query[index]);
     }
   } else {
-    for (const conq of Object.keys(tradeStatNames[jewel])) {
-      stat.disabled = conq != conqueror;
-
-      for (const r of result) {
-        stat.filters.push({
-          id: tradeStatNames[jewel][conq],
-          value: {
-            min: r.seed,
-            max: r.seed
-          },
-          disabled: false
-        });
-      }
-
-      if (stat.filters.length > max_filter_length) {
-        stat.filters = stat.filters.slice(0, max_filter_length);
-      }
-
-      final_query.push(stat);
+    for (let i = 0; i < max_filters; i++) {
+      final_query.push({
+        type: 'count',
+        value: { min: 1 },
+        filters: [],
+        disabled: i == 0 ? false : true
+      });
     }
+
+    for (const [i, r] of result.entries()) {
+      const index = Math.floor(i / max_filter_length);
+
+      final_query[index].filters.push({
+        id: tradeStatNames[jewel][conqueror],
+        value: {
+          min: r.seed,
+          max: r.seed
+        }
+      });
+
+    }
+    console.log("3rd case, Final query: ", final_query);
   }
 
   return {
